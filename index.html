@@ -157,32 +157,6 @@
       max-width: 640px;
     }
 
-    /* ===================== STATS (moved from hero) ===================== */
-    .stats-row {
-      display: flex;
-      gap: 2px;
-      margin-bottom: 40px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .stat {
-      flex: 1;
-      padding: 24px 16px;
-      text-align: center;
-      background: var(--navy-card);
-      border-right: 1px solid var(--border-dim);
-    }
-    .stat:last-child { border-right: none; }
-    .stat-num {
-      display: block;
-      font-size: 36px;
-      font-weight: 900;
-      color: var(--orange);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .stat-label { font-size: 13px; color: var(--text-sub); }
 
     /* ===================== CARD ===================== */
     .card {
@@ -610,8 +584,6 @@
       .tab-btn { font-size: 14px; padding: 14px 16px; }
       .page { padding: 32px 16px 60px; }
       .card, .step, .routine-body, .routine-head { padding: 18px 20px; }
-      .stats-row { flex-wrap: wrap; }
-      .stat { flex: 1 1 40%; }
     }
   </style>
 </head>
@@ -651,14 +623,6 @@
         <h2 class="sec-h2"><span class="o">Slack</span>ワークスペースを作る</h2>
         <p class="sec-lead">AI秘書専用の新しいSlackワークスペースを用意します。<br>既存の仕事用ワークスペースは使いません。</p>
       </div>
-    </div>
-
-    <!-- Stats here (moved from hero) -->
-    <div class="stats-row">
-      <div class="stat"><span class="stat-num">3</span><div class="stat-label">ステップ</div></div>
-      <div class="stat"><span class="stat-num">0</span><div class="stat-label">コーディング</div></div>
-      <div class="stat"><span class="stat-num">4</span><div class="stat-label">自動ルーティン</div></div>
-      <div class="stat"><span class="stat-num">30<small style="font-size:20px">分</small></span><div class="stat-label">セットアップ時間</div></div>
     </div>
 
     <!-- 必要なもの -->
