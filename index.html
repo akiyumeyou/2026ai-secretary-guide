@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI秘書セットアップガイド</title>
+  <style>
+    :root {
+      --coral: #CC785C;
+      --coral-light: #E8906E;
+      --coral-dark: #B05A3E;
+      --orange: #D4673A;
+      --cream: #FDF8F4;
+      --bg: #F7F3EF;
+      --surface: #FFFFFF;
+      --text: #1A1208;
+      --text-secondary: #6B5E52;
+      --text-muted: #9C8B80;
+      --border: #E8DDD6;
+      --success: #4CAF7D;
+      --tag-bg: #FFF0EA;
+      --code-bg: #F4EDE8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      background: linear-gradient(135deg, #1A0F08 0%, #2D1A0E 40%, #3D2010 100%);
+      padding: 72px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(204,120,92,0.18) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(212,103,58,0.12) 0%, transparent 50%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+
+    .dog-mascot {
+      display: inline-block;
+      margin-bottom: 24px;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(204,120,92,0.25);
+      border: 1px solid rgba(204,120,92,0.4);
+      color: #F5C4A8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 span { color: var(--coral-light); }
+    .hero p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.65);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      display: block;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--coral-light);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+
+    /* ---- TABS ---- */
+    .tab-nav-wrapper {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .tab-nav {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 16px;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 16px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--coral); }
+    .tab-btn.active {
+      color: var(--coral);
+      border-bottom-color: var(--coral);
+    }
+    .tab-icon { font-size: 17px; }
+
+    /* ---- CONTENT ---- */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ---- SECTION HEADER ---- */
+    .section-header {
+      margin-bottom: 40px;
+    }
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--tag-bg);
+      color: var(--coral);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(204,120,92,0.2);
+    }
+    .section-header h2 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    /* ---- CARDS ---- */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--tag-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ---- STEP CARD ---- */
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s;
+    }
+    .step-card:hover { box-shadow: var(--shadow-md); }
+    .step-num {
+      position: absolute;
+      top: -14px;
+      left: 28px;
+      background: var(--coral);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .step-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      margin-top: 8px;
+    }
+
+    /* ---- REQUIREMENTS TABLE ---- */
+    .req-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .req-table th {
+      background: var(--bg);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .req-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .req-table tr:last-child td { border-bottom: none; }
+    .req-badge {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--coral-dark);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+
+    /* ---- CODE BLOCK ---- */
+    .code-block {
+      background: #1A0F08;
+      border-radius: var(--radius-sm);
+      padding: 20px 24px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #F5C4A8;
+      overflow-x: auto;
+      margin: 16px 0;
+      position: relative;
+    }
+    .code-block .comment { color: rgba(245,196,168,0.4); }
+    .code-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    /* ---- PROMPT BOX ---- */
+    .prompt-box {
+      background: linear-gradient(135deg, #1A0F08, #2D1A0E);
+      border: 1px solid rgba(204,120,92,0.3);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 16px 0;
+      position: relative;
+    }
+    .prompt-box::before {
+      content: '▋';
+      color: var(--coral);
+      margin-right: 4px;
+    }
+    .prompt-box p {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      color: #F5C4A8;
+      white-space: pre-wrap;
+    }
+    .prompt-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .prompt-label span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--coral-light);
+      text-transform: uppercase;
+    }
+    .copy-btn {
+      margin-left: auto;
+      background: rgba(204,120,92,0.15);
+      border: 1px solid rgba(204,120,92,0.3);
+      color: var(--coral-light);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { background: rgba(204,120,92,0.3); }
+
+    /* ---- PERMISSION TABLE ---- */
+    .perm-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .perm-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+    }
+    .perm-icon { font-size: 22px; flex-shrink: 0; }
+    .perm-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+    .perm-desc { font-size: 13px; color: var(--text-secondary); }
+    .perm-status {
+      margin-left: auto;
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+    .perm-status.allow { background: #E8F5EE; color: #2D8A5A; }
+    .perm-status.custom { background: #FFF3E0; color: #E07B00; }
+    .perm-status.ask { background: #F5F5F5; color: #666; }
+
+    /* ---- ROUTINE CARD ---- */
+    .routine-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .routine-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+    }
+    .routine-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--coral);
+      color: white;
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .routine-num.optional { background: var(--text-muted); }
+    .routine-title { font-weight: 700; font-size: 17px; }
+    .routine-time {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: white;
+      padding: 5px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+    }
+    .routine-body { padding: 24px; }
+
+    /* ---- INFO BOX ---- */
+    .info-box {
+      display: flex;
+      gap: 12px;
+      background: var(--tag-bg);
+      border: 1px solid rgba(204,120,92,0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .info-box .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .info-box p { color: var(--text-secondary); line-height: 1.6; }
+
+    .warn-box {
+      display: flex;
+      gap: 12px;
+      background: #FFF8E0;
+      border: 1px solid #F5D060;
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .warn-box p { color: #7A5F00; line-height: 1.6; }
+
+    /* ---- CHECKLIST ---- */
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ---- DAILY USAGE ---- */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .usage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .usage-time {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--coral);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .usage-label { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+    .usage-list { list-style: none; }
+    .usage-list li {
+      font-size: 14px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .usage-list li:last-child { border-bottom: none; }
+
+    /* ---- TROUBLE TABLE ---- */
+    .trouble-list { list-style: none; }
+    .trouble-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: start;
+      box-shadow: var(--shadow-sm);
+    }
+    .trouble-q { font-weight: 700; color: var(--text); margin-bottom: 8px; font-size: 15px; }
+    .trouble-a { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .trouble-icon {
+      font-size: 28px;
+      padding-top: 2px;
+    }
+
+    /* ---- FLOW DIAGRAM ---- */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 24px 0;
+    }
+    .flow-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .flow-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--coral);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .flow-line-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 12px;
+      flex-shrink: 0;
+    }
+    .flow-dot-wrap { display: flex; align-items: center; gap: 16px; }
+    .flow-connector {
+      width: 2px;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--coral), var(--border));
+      margin-left: 5px;
+    }
+    .flow-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      flex: 1;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .flow-content strong { display: block; margin-bottom: 4px; font-size: 15px; }
+
+    /* ---- FAQ ---- */
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .faq-q:hover { background: var(--bg); }
+    .faq-q-label {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--coral);
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .faq-arrow {
+      margin-left: auto;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      font-size: 14px;
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a {
+      display: none;
+      padding: 0 24px 20px 64px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-a { display: block; }
+
+    /* ---- CHANNEL PILL ---- */
+    .ch {
+      display: inline-block;
+      background: #4A154B;
+      color: #E8D5E8;
+      font-family: monospace;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 5px;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      background: #1A0F08;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 13px;
+    }
+    footer a { color: var(--coral-light); text-decoration: none; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      .tab-btn { padding: 14px 14px; font-size: 13px; }
+      .page { padding: 32px 16px 60px; }
+      .step-card, .routine-card, .card { padding: 20px; }
+      .hero { padding: 48px 16px 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ======================== HERO ======================== -->
+<header class="hero">
+  <div class="hero-content">
+
+    <!-- Dog Mascot SVG -->
+    <div class="dog-mascot">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <ellipse cx="60" cy="80" rx="34" ry="28" fill="#CC785C"/>
+        <!-- Head -->
+        <circle cx="60" cy="48" r="30" fill="#D4895E"/>
+        <!-- Ears -->
+        <ellipse cx="35" cy="32" rx="12" ry="17" rx="12" ry="18" fill="#B05A3E" transform="rotate(-20 35 32)"/>
+        <ellipse cx="85" cy="32" rx="12" ry="17" fill="#B05A3E" transform="rotate(20 85 32)"/>
+        <!-- Inner ears -->
+        <ellipse cx="35" cy="33" rx="6" ry="11" fill="#E8906E" transform="rotate(-20 35 33)"/>
+        <ellipse cx="85" cy="33" rx="6" ry="11" fill="#E8906E" transform="rotate(20 85 33)"/>
+        <!-- Face -->
+        <ellipse cx="52" cy="50" rx="4" ry="5" fill="#1A0F08"/>
+        <ellipse cx="68" cy="50" rx="4" ry="5" fill="#1A0F08"/>
+        <!-- Eye shine -->
+        <circle cx="54" cy="48" r="1.5" fill="white"/>
+        <circle cx="70" cy="48" r="1.5" fill="white"/>
+        <!-- Snout -->
+        <ellipse cx="60" cy="60" rx="11" ry="8" fill="#E8906E"/>
+        <!-- Nose -->
+        <ellipse cx="60" cy="56" rx="5" ry="3.5" fill="#1A0F08"/>
+        <!-- Smile -->
+        <path d="M53 64 Q60 70 67 64" stroke="#1A0F08" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- Legs -->
+        <rect x="32" y="98" width="16" height="18" rx="8" fill="#CC785C"/>
+        <rect x="72" y="98" width="16" height="18" rx="8" fill="#CC785C"/>
+        <!-- Tail -->
+        <path d="M92 78 Q110 65 105 55" stroke="#CC785C" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <!-- Collar -->
+        <rect x="42" y="70" width="36" height="8" rx="4" fill="#E8906E"/>
+        <circle cx="60" cy="74" r="3" fill="#FFD700"/>
+        <!-- Laptop icon on belly -->
+        <rect x="48" y="82" width="24" height="15" rx="3" fill="#1A0F08" opacity="0.3"/>
+        <rect x="50" y="84" width="20" height="11" rx="2" fill="#CC785C" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <div class="badge">🤖 Workshop Guide 2026</div>
+    <h1>自分専用 <span>AI秘書</span> を<br>作るハンズオン</h1>
+    <p>Claude × Slack × Google Calendar で作る、あなただけのAIアシスタント。コーディング不要、30分で完成。</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">3</span><div class="stat-label">ステップ</div></div>
+      <div class="stat"><span class="stat-num">0</span><div class="stat-label">コーディング</div></div>
+      <div class="stat"><span class="stat-num">4</span><div class="stat-label">自動ルーティン</div></div>
+      <div class="stat"><span class="stat-num">30<small style="font-size:18px">分</small></span><div class="stat-label">セットアップ時間</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ======================== TAB NAV ======================== -->
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('step1', this)">
+      <span class="tab-icon">💬</span> ステップ１
+    </button>
+    <button class="tab-btn" onclick="switchTab('step2', this)">
+      <span class="tab-icon">🔌</span> ステップ２
+    </button>
+    <button class="tab-btn" onclick="switchTab('step3', this)">
+      <span class="tab-icon">⚡</span> ステップ３
+    </button>
+    <button class="tab-btn" onclick="switchTab('test', this)">
+      <span class="tab-icon">✅</span> テスト
+    </button>
+    <button class="tab-btn" onclick="switchTab('qa', this)">
+      <span class="tab-icon">❓</span> Q&amp;A
+    </button>
+  </div>
+</nav>
+
+<!-- ======================== STEP 1 ======================== -->
+<div id="step1" class="tab-content active">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-tag">💬 ステップ 1</div>
+      <h2>Slack専用ワークスペースを作る</h2>
+      <p>このAI秘書専用の新しいSlackワークスペースを用意します。既存の仕事用ワークスペースは使いません。</p>
+    </div>
+
+    <!-- Requirements -->
+    <div class="card" style="margin-bottom:32px">
+      <div class="card-title">
+        <div class="card-icon">📋</div>
+        このシステムに必要なもの
+      </div>
+      <table class="req-table">
+        <thead>
+          <tr>
+            <th>必要なもの</th>
+            <th>条件・備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Claude Pro / Max プラン</strong></td>
+            <td>Routines機能が使えるプラン <span class="req-badge">必須</span></td>
+          </tr>
+          <tr>
+            <td><strong>Slackワークスペース</strong></td>
+            <td>無料プランでOK。専用の新規ワークスペースを推奨</td>
+          </tr>
+          <tr>
+            <td><strong>Googleアカウント</strong></td>
+            <td>GmailとGoogleカレンダーが使えるもの</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Steps -->
+    <div class="step-card">
+      <div class="step-num">STEP 1-1</div>
+      <h3>Slackアカウントを作成 / ログイン</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">slack.com を開き、「新しいワークスペースを作成」をクリックしてメールアドレスで登録します。</p>
+      <div class="code-label">🌐 アクセス先</div>
+      <div class="code-block">https://slack.com → 「ワークスペースを作成」</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">STEP 1-2</div>
+      <h3>ワークスペース名を決める</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">好きな名前でOKです。分かりやすい名前にしましょう。</p>
+      <div class="perm-grid" style="grid-template-columns: repeat(3,1fr)">
+        <div style="background:var(--bg);border-radius:8px;padding:14px;text-align:center;font-weight:600;">AI秘書</div>
+        <div style="background:var(--bg);border-radius:8px;padding:14px;text-align:center;font-weight:600;">MyAssistant</div>
+        <div style="background:var(--bg);border-radius:8px;padding:14px;text-align:center;font-weight:600;">Claude Bot</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">STEP 1-3</div>
+      <h3>チャンネルを2つ作成する</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">以下の2チャンネルを作ります。名前は半角英数字・ハイフンのみ使用できます。</p>
+      <div class="perm-grid">
+        <div class="perm-item">
+          <span class="perm-icon">📋</span>
+          <div>
+            <div class="perm-name"><span class="ch">#tasks</span></div>
+            <div class="perm-desc">タスク管理・進捗確認用。毎日ここでタスクをやり取りします。</div>
+          </div>
+        </div>
+        <div class="perm-item">
+          <span class="perm-icon">📅</span>
+          <div>
+            <div class="perm-name"><span class="ch">#schedule</span></div>
+            <div class="perm-desc">予定通知・リサーチ結果の受け取り用。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <span class="icon">💡</span>
+      <p>既存の仕事用ワークスペースに混ぜると通知が埋もれます。このシステム専用の新しいワークスペースを作るのが快適に使うポイントです。</p>
+    </div>
+
+    <!-- Daily flow preview -->
+    <div class="card" style="margin-top:32px">
+      <div class="card-title"><div class="card-icon">🔄</div>毎日の通知フロー（完成イメージ）</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:8px">
+        <div style="text-align:center;padding:16px;background:var(--bg);border-radius:10px">
+          <div style="font-size:28px;margin-bottom:6px">🌅</div>
+          <div style="font-weight:700;color:var(--coral)">朝 7:00</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">今日の予定 &amp;<br>タスク確認</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg);border-radius:10px">
+          <div style="font-size:28px;margin-bottom:6px">☀️</div>
+          <div style="font-weight:700;color:var(--coral)">昼 12:00</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">進捗確認 &amp;<br>午後リマインド</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg);border-radius:10px">
+          <div style="font-size:28px;margin-bottom:6px">🌙</div>
+          <div style="font-weight:700;color:var(--coral)">夜 21:00</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">振り返り &amp;<br>持ち越し確認</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg);border-radius:10px">
+          <div style="font-size:28px;margin-bottom:6px">📊</div>
+          <div style="font-weight:700;color:var(--coral)">月曜 7:00</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px">セミナー情報<br>リサーチ（任意）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== STEP 2 ======================== -->
+<div id="step2" class="tab-content">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-tag">🔌 ステップ 2</div>
+      <h2>コネクタを接続する</h2>
+      <p>ClaudeとSlack・Googleカレンダーを接続します。ここが唯一の難関ですが、一度設定すれば以降は不要です。</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">STEP 2-1</div>
+      <h3>コネクタ設定を開く</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">claude.ai にログインし、以下の順にクリックします。</p>
+      <div class="flow">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--coral);flex-shrink:0"></div>
+          <div class="flow-content" style="margin:0"><strong>claude.ai</strong> にアクセスしてログイン</div>
+        </div>
+        <div style="width:2px;height:20px;background:var(--border);margin-left:3px;margin-bottom:8px"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--coral);flex-shrink:0"></div>
+          <div class="flow-content" style="margin:0">左サイドバー or 設定メニューから <strong>「Customize」</strong> をクリック</div>
+        </div>
+        <div style="width:2px;height:20px;background:var(--border);margin-left:3px;margin-bottom:8px"></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--coral);flex-shrink:0"></div>
+          <div class="flow-content" style="margin:0">「<strong>コネクタ</strong>」セクションで Google Calendar と Slack を接続</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">STEP 2-2</div>
+      <h3>Google Calendar を接続</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:20px">コネクタ一覧から「Google Calendar」をクリックし、Googleアカウントでログインして許可を与えます。</p>
+      <div class="perm-grid">
+        <div class="perm-item">
+          <span class="perm-icon">📖</span>
+          <div>
+            <div class="perm-name">読み取り専用ツール</div>
+            <div class="perm-desc">カレンダーの予定を読む（朝の通知に使用）</div>
+          </div>
+          <span class="perm-status allow">常に許可</span>
+        </div>
+        <div class="perm-item">
+          <span class="perm-icon">✏️</span>
+          <div>
+            <div class="perm-name">Creates a calendar event</div>
+            <div class="perm-desc">カレンダーへの予定追加（スマホから依頼するとき）</div>
+          </div>
+          <span class="perm-status custom">カスタム許可</span>
+        </div>
+        <div class="perm-item">
+          <span class="perm-icon">🗑️</span>
+          <div>
+            <div class="perm-name">削除・変更ツール</div>
+            <div class="perm-desc">予定の削除や変更（誤操作防止のため制限）</div>
+          </div>
+          <span class="perm-status ask">承認が必要</span>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:16px">
+        <span class="icon">🔒</span>
+        <p>「カスタム」を選んで「Creates a calendar event」<strong>のみ</strong>を許可にすると安全です。削除ツールは「承認が必要」のままにしておきましょう。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">STEP 2-3</div>
+      <h3>Slack を接続</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:20px">コネクタ一覧から「Slack」をクリックし、ステップ1で作ったワークスペースを選択して許可します。</p>
+      <div class="perm-grid">
+        <div class="perm-item">
+          <span class="perm-icon">💬</span>
+          <div>
+            <div class="perm-name">すべてのカテゴリ（読み書き）</div>
+            <div class="perm-desc">Slackへの投稿・チャンネルの読み取りに必要</div>
+          </div>
+          <span class="perm-status allow">常に許可</span>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:16px">
+        <span style="font-size:18px;flex-shrink:0">⚠️</span>
+        <p style="margin-left:10px">Slackは「1接続 = 1ワークスペース」の仕組みです。接続したワークスペースが自動的に対象になります。ルーティンに「#tasks」と書けば、そのチャンネルに届きます。</p>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,#1A0F08,#2D1A0E);border-color:rgba(204,120,92,0.3);color:white">
+      <div class="card-title" style="color:var(--coral-light)">
+        <div class="card-icon" style="background:rgba(204,120,92,0.2)">🎯</div>
+        ここが唯一の難関
+      </div>
+      <p style="color:rgba(255,255,255,0.7);font-size:15px;line-height:1.7">この権限設定が少し複雑に感じるかもしれませんが、<strong style="color:white">一度設定すれば以降はまったく触る必要がありません</strong>。落ち着いて一つずつ設定しましょう。困ったら講師に聞いてください。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== STEP 3 ======================== -->
+<div id="step3" class="tab-content">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-tag">⚡ ステップ 3</div>
+      <h2>ルーティンを4つ作る</h2>
+      <p>claude.ai のRoutines機能で自動スケジュールを設定します。以下のプロンプトをコピー&amp;ペーストするだけです。</p>
+    </div>
+
+    <div class="step-card" style="margin-bottom:32px">
+      <div class="step-num">開き方</div>
+      <h3>Routines設定を開く</h3>
+      <div class="code-block">claude.ai → Routines → 「新しいルーティン」</div>
+      <p style="color:var(--text-secondary);font-size:14px;margin-top:12px">「何を自動化しますか？」の欄に以下のプロンプトをそれぞれ貼り付けて作成します。</p>
+    </div>
+
+    <!-- Routine 1 -->
+    <div class="routine-card">
+      <div class="routine-header">
+        <div class="routine-num">1</div>
+        <div>
+          <div class="routine-title">朝の通知</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:2px">今日の予定 + タスク確認</div>
+        </div>
+        <div class="routine-time">⏰ 毎日 07:00</div>
+      </div>
+      <div class="routine-body">
+        <div class="prompt-label">
+          <span>プロンプト</span>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="prompt-box">
+          <p>毎朝7時に以下を実行してください。
+
+1. Googleカレンダーで今日の予定を取得して、Slackの #schedule に投稿する
+2. Slackの #tasks の直近のメッセージを確認して持ち越しタスクがあればリスト表示し、
+   「今日追加するタスクはありますか？」と #tasks に投稿する</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Routine 2 -->
+    <div class="routine-card">
+      <div class="routine-header">
+        <div class="routine-num">2</div>
+        <div>
+          <div class="routine-title">昼の進捗確認</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:2px">完了タスク集計 + 午後リマインド</div>
+        </div>
+        <div class="routine-time">⏰ 毎日 12:00</div>
+      </div>
+      <div class="routine-body">
+        <div class="prompt-label">
+          <span>プロンプト</span>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="prompt-box">
+          <p>毎日12時に以下を実行してください。
+
+Slackの #tasks の今日のメッセージを読んで、完了済みのタスクを集計し、
+残りのタスクを表示して「午後に向けて確認したいことはありますか？」と投稿する</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Routine 3 -->
+    <div class="routine-card">
+      <div class="routine-header">
+        <div class="routine-num">3</div>
+        <div>
+          <div class="routine-title">夜の振り返り</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:2px">完了まとめ + 持ち越しタスク確認</div>
+        </div>
+        <div class="routine-time">⏰ 毎日 21:00</div>
+      </div>
+      <div class="routine-body">
+        <div class="prompt-label">
+          <span>プロンプト</span>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="prompt-box">
+          <p>毎日21時に以下を実行してください。
+
+Slackの #tasks の今日のメッセージを読んで、
+・完了したタスクをまとめる
+・未完了タスクを「🔄 持ち越しタスク:」としてリスト表示する
+・「持ち越しますか？追加や変更があれば教えてください」と投稿する</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Routine 4 (Optional) -->
+    <div class="routine-card">
+      <div class="routine-header">
+        <div class="routine-num optional">4</div>
+        <div>
+          <div class="routine-title">週次リサーチ <span style="font-size:12px;font-weight:500;color:var(--text-muted);margin-left:6px">任意</span></div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:2px">AI・DXセミナー情報</div>
+        </div>
+        <div class="routine-time">⏰ 毎週月曜 07:00</div>
+      </div>
+      <div class="routine-body">
+        <div class="prompt-label">
+          <span>プロンプト</span>
+          <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+        </div>
+        <div class="prompt-box">
+          <p>毎週月曜の朝7時に以下を実行してください。
+
+Webで以下を検索して、今日以降の情報のみをSlackの #schedule に投稿する。
+該当なしの場合は「該当なし」とだけ投稿する。
+
+１. [自分の地域] のAI・DX関連セミナー・勉強会</p>
+        </div>
+        <div class="warn-box">
+          <p>⚠️ <strong>[自分の地域]</strong> の部分を自分の都道府県名（例：「東京」「大阪」）に書き換えてから貼り付けてください。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily usage -->
+    <div class="card" style="margin-top:40px">
+      <div class="card-title"><div class="card-icon">📱</div>毎日の使い方</div>
+      <div class="usage-grid">
+        <div class="usage-card">
+          <div class="usage-time">Slack</div>
+          <div class="usage-label">タスク管理</div>
+          <ul class="usage-list">
+            <li>朝：#tasks に返信してタスク追加</li>
+            <li>昼：「〇〇が完了しました」と投稿</li>
+            <li>夜：持ち越しを確認・返信</li>
+          </ul>
+        </div>
+        <div class="usage-card">
+          <div class="usage-time">Claude<br><span style="font-size:14px">アプリ</span></div>
+          <div class="usage-label">カレンダー追加（スマホ）</div>
+          <div class="code-block" style="font-size:13px;padding:12px 16px">「明日14時に△△との<br>打ち合わせをGoogleカレンダーに追加して」</div>
+          <div class="warn-box">
+            <p>📱 iPhoneは「<strong>Googleカレンダーに</strong>」と明示しないとApple Calendarに書き込まれることがあります。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== TEST ======================== -->
+<div id="test" class="tab-content">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-tag">✅ テスト</div>
+      <h2>動作確認チェックリスト</h2>
+      <p>設定が完了したら、以下のチェックリストで動作を確認しましょう。</p>
+    </div>
+
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title"><div class="card-icon">🔌</div>コネクタ確認</div>
+      <ul class="checklist">
+        <li>claude.ai → Customize → コネクタ に「Google Calendar」が接続済みで表示される</li>
+        <li>claude.ai → Customize → コネクタ に「Slack」が接続済みで表示される</li>
+        <li>Google Calendarの読み取りツールが「常に許可」になっている</li>
+        <li>SlackのすべてのカテゴリがURL「常に許可」になっている</li>
+      </ul>
+    </div>
+
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title"><div class="card-icon">⚡</div>ルーティン確認</div>
+      <ul class="checklist">
+        <li>Routines一覧にルーティン①②③が表示されている</li>
+        <li>（任意）ルーティン④が表示されている</li>
+        <li>各ルーティンのスケジュール時刻が正しく設定されている</li>
+      </ul>
+    </div>
+
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title"><div class="card-icon">📨</div>翌朝7時の確認</div>
+      <ul class="checklist">
+        <li>Slackの <span class="ch">#schedule</span> に今日の予定が届いた</li>
+        <li>Slackの <span class="ch">#tasks</span> に「今日追加するタスクはありますか？」が届いた</li>
+      </ul>
+    </div>
+
+    <!-- Manual test -->
+    <div class="step-card" style="margin-top:40px">
+      <div class="step-num">手動テスト</div>
+      <h3>今すぐカレンダー追加を試してみる</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">スマホのClaudeアプリ（またはWeb）で以下を送信してGoogleカレンダーに予定が追加されるか確認します。</p>
+      <div class="prompt-label">
+        <span>テスト用プロンプト</span>
+        <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+      </div>
+      <div class="prompt-box">
+        <p>明日の15時に「AI秘書テスト」というイベントをGoogleカレンダーに追加してください。</p>
+      </div>
+      <div class="info-box">
+        <span class="icon">✅</span>
+        <p>Claudeが「カレンダーに追加しました」と返答し、実際にGoogleカレンダーにイベントが表示されれば成功です。</p>
+      </div>
+    </div>
+
+    <div class="step-card" style="margin-top:24px">
+      <div class="step-num">手動テスト②</div>
+      <h3>Slackへの投稿を手動でトリガーする</h3>
+      <p style="color:var(--text-secondary);font-size:15px;margin-bottom:16px">Claudeのチャット（Web/アプリ）で以下を送信して、Slackに届くか確認します。</p>
+      <div class="prompt-label">
+        <span>テスト用プロンプト</span>
+        <button class="copy-btn" onclick="copyPrompt(this)">コピー</button>
+      </div>
+      <div class="prompt-box">
+        <p>Slackの #tasks チャンネルに「テスト投稿：AI秘書の設定が完了しました！」と投稿してください。</p>
+      </div>
+      <div class="info-box">
+        <span class="icon">✅</span>
+        <p>Slackの <span class="ch">#tasks</span> にメッセージが届けばSlack連携は完璧です。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== Q&A ======================== -->
+<div id="qa" class="tab-content">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-tag">❓ Q&amp;A</div>
+      <h2>よくある質問とトラブル対処</h2>
+      <p>セットアップ中に詰まったら、まずここを確認してください。</p>
+    </div>
+
+    <!-- Trouble section -->
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;margin-top:8px">🔧 トラブルシューティング</h3>
+
+    <ul class="trouble-list">
+      <li class="trouble-item">
+        <span class="trouble-icon">😴</span>
+        <div>
+          <div class="trouble-q">ルーティンが動かない / 通知が来ない</div>
+          <div class="trouble-a">Customize → コネクタ で、SlackとGoogle Calendarの接続ステータスを確認してください。「接続済み」になっていない場合は再接続します。Routinesページでルーティンが「有効」になっているかも確認を。</div>
+        </div>
+      </li>
+      <li class="trouble-item">
+        <span class="trouble-icon">📵</span>
+        <div>
+          <div class="trouble-q">Slackに通知が来ない</div>
+          <div class="trouble-a">コネクタの「Slack」で書き込みツールが「常に許可」になっているか確認してください。「承認が必要」になっていると、ルーティン実行時にClaudeが止まってしまいます。</div>
+        </div>
+      </li>
+      <li class="trouble-item">
+        <span class="trouble-icon">📅</span>
+        <div>
+          <div class="trouble-q">Googleカレンダーが読めない</div>
+          <div class="trouble-a">Google Calendarコネクタが正しいGoogleアカウントで接続されているか確認してください。複数アカウントをお持ちの場合、Googleカレンダーを使っているアカウントと接続したアカウントが一致しているかチェックします。</div>
+        </div>
+      </li>
+      <li class="trouble-item">
+        <span class="trouble-icon">🤔</span>
+        <div>
+          <div class="trouble-q">ルーティン実行時に承認を求められる</div>
+          <div class="trouble-a">コネクタの書き込み権限を「常に許可」に変更してください。承認が必要な設定のままだと、ルーティンが無人で動いているときに止まってしまいます。</div>
+        </div>
+      </li>
+      <li class="trouble-item">
+        <span class="trouble-icon">📱</span>
+        <div>
+          <div class="trouble-q">iPhoneのカレンダー（Apple Calendar）に書き込まれる</div>
+          <div class="trouble-a">Claudeに依頼するとき、必ず「<strong>Googleカレンダーに</strong>」と明示してください。「カレンダーに追加して」だけだと、iPhoneのデフォルトカレンダー（Apple Calendar）に書き込まれることがあります。</div>
+        </div>
+      </li>
+      <li class="trouble-item">
+        <span class="trouble-icon">💬</span>
+        <div>
+          <div class="trouble-q">スマホのClaudeアプリからタスクを追加したい</div>
+          <div class="trouble-a">現在の仕組みでは、スマホのClaudeアプリからタスクチャンネルへの直接投稿はできません。タスク追加はSlackアプリから <span class="ch">#tasks</span> に投稿してください。翌朝のルーティンが自動的に読み取ります。</div>
+        </div>
+      </li>
+    </ul>
+
+    <!-- FAQ section -->
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;margin-top:40px">💬 よくある質問</h3>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        プラグインは必要ですか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">不要です。このガイドの手順（コネクタ + Routines）だけで同じ仕組みが動きます。プラグインや <code>/company</code> コマンドは、対話型の仮想組織を動かしたい上級者向けの追加機能です。</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        無料プランのClaudeでも使えますか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">Routines機能はClaude ProまたはMaxプランが必要です。無料プランではRoutinesが使えないため、自動通知の仕組みを作ることができません。コネクタ（Slack・Googleカレンダー接続）は手動チャットで利用することはできます。</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        既存のSlackワークスペースに追加できますか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">技術的には可能ですが、仕事の通知と混在して埋もれやすくなります。専用ワークスペースを新しく作ることを強くおすすめします。Slackの無料プランで十分です。</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        ルーティンのプロンプトはカスタマイズできますか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">もちろんです。プロンプトは自由に編集できます。例えば、朝の通知に「天気予報も教えて」を追加したり、夜の振り返りで「明日のタスクを提案して」を加えたりと、自分のワークスタイルに合わせてカスタマイズしてください。</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        週次リサーチルーティン（ルーティン④）は必須ですか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">任意です。AI・DXセミナー情報のリサーチが不要な方は作らなくてOKです。また、検索する内容は「地域のビジネス情報」「業界ニュース」「読書リスト」など、自分が役立つ情報に変えることもできます。</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <div class="faq-q-label">Q</div>
+        コネクタを複数のGoogleアカウントで使えますか？
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">現在、Claudeのコネクタは1サービスにつき1アカウントの接続です。プライベートと仕事で別々のGoogleアカウントをお使いの場合は、カレンダーを使う方のアカウントを接続してください。</div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card" style="margin-top:40px;text-align:center;background:linear-gradient(135deg,#FDF8F4,#F7F0E8)">
+      <div style="font-size:40px;margin-bottom:12px">🐕</div>
+      <h3 style="font-size:20px;font-weight:700;margin-bottom:8px">解決しない場合は？</h3>
+      <p style="color:var(--text-secondary);font-size:15px">ワークショップ中は講師に遠慮なく声をかけてください。<br>「どこで詰まっているか」をスクリーンで見せてもらうのが一番早いです。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== FOOTER ======================== -->
+<footer>
+  <p>AI秘書セットアップガイド &copy; 2026 &nbsp;|&nbsp; Claude × Slack × Google Calendar</p>
+  <p style="margin-top:8px">Powered by <a href="https://claude.ai">claude.ai</a></p>
+</footer>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tab-nav-wrapper').offsetTop - 10, behavior: 'smooth' });
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  function copyPrompt(btn) {
+    const box = btn.closest('.routine-body, .step-card');
+    const text = box.querySelector('.prompt-box p, .prompt-box')?.innerText || '';
+    navigator.clipboard.writeText(text.trim()).then(() => {
+      btn.textContent = '✓ コピー済み';
+      setTimeout(() => btn.textContent = 'コピー', 1800);
+    });
+  }
+</script>
+</body>
+</html>
